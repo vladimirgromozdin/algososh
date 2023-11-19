@@ -37,7 +37,7 @@ export const StringComponent: React.FC = () => {
 
     const handleStringReversal = () => {
         setIsFinished(false);
-        // This will populate the currentStringArray and trigger string render
+        // This will populate the currentStringArray trigger string render
         const arrayFromString = Array.from(inputValue)
         setCandidateIndexes([0, inputValue.length - 1])
         setCurrentStringArray(arrayFromString)
@@ -52,7 +52,7 @@ export const StringComponent: React.FC = () => {
             <div className={styles.content}>
                 <div className={styles.inputContainer}>
                     <Input onChange={onInputChange} placeholder={'Введите текст'} maxLength={11} isLimitText={true}/>
-                    <Button onClick={handleStringReversal} text={'Развернуть'} disabled={!isFinished}/>
+                    <Button onClick={handleStringReversal} text={'Развернуть'} disabled={!isFinished} isLoader={!isFinished}/>
                 </div>
                 <div>
                     {currentStringArray && <ul className={styles.list}>

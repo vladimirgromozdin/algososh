@@ -1,19 +1,21 @@
-import React from "react";
+import React, {useState} from "react";
 import {SolutionLayout} from "../ui/solution-layout/solution-layout";
 import styles from "../sorting-page/sorting-page.module.css"
 import {Button} from "../ui/button/button";
 import {RadioInput} from "../ui/radio-input/radio-input";
 import {Direction} from "../../types/direction";
+import {Column} from "../ui/column/column";
 
 export const SortingPage: React.FC = () => {
-    const randomArr = (): number[] => {
+    const [array, setArray] = useState<number[] | null>([])
+    const generateArray = () => {
         const minLen = 3
         const maxLen = 17
         const length = Math.floor(Math.random() * (maxLen - minLen + 1)) + minLen;
-        const arr = Array.from({length}, ()=>(Math.floor((Math.random()*101))))
-        console.log(arr)
-        return arr
+        setArray(Array.from({length}, () => (Math.floor((Math.random() * 101)))))
     }
+
+
     return (
         <SolutionLayout title="Сортировка массива">
             <div className={styles.content}>
@@ -29,10 +31,15 @@ export const SortingPage: React.FC = () => {
                                 extraClass={styles.sortingButton}></Button>
                     </div>
                     <div className={styles.buttonNewArray}>
-                        <Button text="Новый массив" onClick={randomArr} disabled={false} isLoader={false}
+                        <Button text="Новый массив" onClick={generateArray} disabled={false} isLoader={false}
                                 extraClass={styles.buttonNewArray}></Button>
                     </div>
                 </div>
+                {array && <ul className={styles.arrayContainer}>
+                    {array.map((char, index) => <li key={index}>
+                        <Column index={array[index]}/>
+                    </li>)}
+                </ul>}
             </div>
         </SolutionLayout>
     );

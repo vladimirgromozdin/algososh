@@ -1,0 +1,39 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.settingsContainer {
+    width: 980px;
+    display: flex;
+    flex-direction: row;
+}
+
+.settingsSortingType {
+    display: flex;
+    gap: 40px;
+    max-width: 221px;
+    align-items: center;
+    margin-right: 52px;
+}
+
+.sortingButton {
+    width: 208px;
+}
+
+.settingsSortingOrder {
+    display: flex;
+    gap: 12px;
+    max-width: 430px;
+    margin-right: 80px;
+}
+
+.buttonNewArray {
+    display: flex;
+    width: 205px;
+}
+
+.array {
+
+}

@@ -11,7 +11,6 @@ import {ElementStates} from "../../types/element-states";
 export const StringComponent: React.FC = () => {
     const [isFinished, setIsFinished] = useState<boolean>(true)
     const [candidateIndexes, setCandidateIndexes] = useState<number[] | null>(null)
-    // TODO: Remove Sorted Indexes: const [sortedIndexes, setSortedIndexes] = useState<number[] | null>(null)
     const [inputValue, setInputValue] = useState('');
     const [currentStringArray, setCurrentStringArray] = useState<string[]>([]);
     const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {

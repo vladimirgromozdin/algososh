@@ -8,15 +8,17 @@ import {Column} from "../ui/column/column";
 import {SortingAlgorithms} from "../../types/sorting-algorithms";
 import {bubbleSorting, selectionSorting} from "./sorting.algorithm";
 import {delay} from "../../utils/delay";
+import {ElementStates} from "../../types/element-states";
 
 export const SortingPage: React.FC = () => {
     const [activeButton, setActiveButton] = useState<Direction | null>(null)
     const [isFinished, setIsFinished] = useState<boolean>(true)
     const [candidateIndexes, setCandidateIndexes] = useState<number[] | null>(null)
-    const [sortedIndex, setSortedIndex] = useState<number | null>(null)
+    const [sortedIndexes, setSortedIndexes] = useState<number[] | null>(null)
     const [array, setArray] = useState<number[] | null>(null)
-    const [sortingAlgorithm, setSortingAlgorithm] = useState<SortingAlgorithms>(SortingAlgorithms.Bubble)
+    const [sortingAlgorithm, setSortingAlgorithm] = useState<SortingAlgorithms>(SortingAlgorithms.Selection)
     const generateArray = () => {
+        setSortedIndexes(null)
         const minLen = 3
         const maxLen = 17
         const length = Math.floor(Math.random() * (maxLen - minLen + 1)) + minLen;
@@ -28,35 +30,44 @@ export const SortingPage: React.FC = () => {
         setCandidateIndexes(null)
     }
 
-    const sortArray = (array: number[] | null, order: Direction) => {
-        setIsFinished(false);
-        setActiveButton(order)
-        switch (sortingAlgorithm) {
-            case SortingAlgorithms.Bubble:
-                bubbleSorting(array, order, updateArray, delay)
-                console.log("Sorted Array (Bubble Sort):", array);
-                break;
-            case SortingAlgorithms.Selection:
-                selectionSorting(array, order)
-                console.log("Sorted Array (Selection Sort):", array);
-                break;
-        }
-    }
-
     const updateArray = (newArray: number[]) => {
         setArray(newArray)
     }
 
-    const updateSortedIndex = (index: number) => {
-        setSortedIndex(index)
-    }
+    const updateSortedIndex = (index: number | null) => {
+        if (index === null) {
+            setSortedIndexes(null);
+        } else {
+            setSortedIndexes(prevIndexes => prevIndexes ? [...prevIndexes, index] : [index]);
+        }
+    };
 
-    const updateCandidateIndexes = (indexes: number[]) => {
-        setCandidateIndexes(indexes)
+    const updateCandidateIndexes = (indexes: number[] | null) => {
+        if (indexes === null) {
+            setCandidateIndexes(null)
+        } else {
+            setCandidateIndexes(indexes)
+        }
     }
 
     const handleSortingAlgorithmChoice = (algorithm: SortingAlgorithms) => {
         setSortingAlgorithm(algorithm)
+    }
+
+    const sortArray = (array: number[] | null, order: Direction) => {
+        setIsFinished(false);
+        setSortedIndexes(null)
+        setActiveButton(order)
+        switch (sortingAlgorithm) {
+            case SortingAlgorithms.Bubble:
+                bubbleSorting(array, order, updateArray, delay, unlockButton, updateCandidateIndexes, updateSortedIndex)
+                console.log("Sorted Array (Bubble Sort):", array);
+                break;
+            case SortingAlgorithms.Selection:
+                selectionSorting(array, order, updateArray, delay, unlockButton, updateCandidateIndexes, updateSortedIndex)
+                console.log("Sorted Array (Selection Sort):", array);
+                break;
+        }
     }
 
     return (
@@ -90,7 +101,8 @@ export const SortingPage: React.FC = () => {
                 </div>
                 {array && <ul className={styles.arrayContainer}>
                     {array.map((char, index) => <li key={index}>
-                        <Column index={array[index]}/>
+                        <Column index={array[index]}
+                                state={candidateIndexes?.includes(index) ? ElementStates.Changing : sortedIndexes?.includes(index) ? ElementStates.Modified : ElementStates.Default}/>
                     </li>)}
                 </ul>}
             </div>

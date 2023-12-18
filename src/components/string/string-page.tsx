@@ -56,7 +56,7 @@ export const StringComponent: React.FC = () => {
                 <div>
                     {currentStringArray && <ul className={styles.list}>
                         {currentStringArray.map((char, index) => <li key={index}>
-                            <Circle letter={char}
+                            <Circle letter={char} index={index}
                                     state={candidateIndexes?.includes(index) ? ElementStates.Changing : ElementStates.Default}/>
                         </li>)}
                     </ul>}

@@ -40,8 +40,9 @@
     width: 362px;
 }
 
-.stack {
+.linkedList {
     gap: 20px;
     display: flex;
     list-style: none;
+    padding-top: 60px;
 }

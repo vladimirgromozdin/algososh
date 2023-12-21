@@ -13,6 +13,8 @@ export interface ILinkedList<T> {
 
     getSize(): number;
 
+    toArray(): T[];
+
     print(): void;
 }
 
@@ -125,6 +127,15 @@ export class LinkedList<T> implements ILinkedList<T> {
         return newList;
     }
 
+    toArray(): T[] {
+        const array: T[] = [];
+        let current = this.head;
+        while (current !== null) {
+            array.push(current.value);
+            current = current.next;
+        }
+        return array;
+    }
 
     print(): string {
         let curr = this.head;

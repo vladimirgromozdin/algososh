@@ -18,7 +18,14 @@ export const ListPage: React.FC = () => {
     const [visualLinkedList, setVisualLinkedList] = useState<number[]>([]);
     const [temporaryHead, setTemporaryHead] = useState<string | React.ReactElement | undefined>('top');
     const [temporaryTail, setTemporaryTail] = useState<string | React.ReactElement | undefined>('tail');
+    const [temporaryNode, setTemporaryNode] = useState<string | React.ReactElement | undefined>('');
+    const [isRemovingAtIndex, setIsRemovingAtIndex] = useState<boolean>(false);
+    const [nextElementPosition, setNextElementPosition] = useState<number | null>(null);
+    const [isAddingAtIndex, setIsAddingAtIndex] = useState<boolean>(false);
     const [newElementIndex, setNewElementIndex] = useState<number | null>(null);
+    const [isRemovingHead, setIsRemovingHead] = useState(false);
+    const [isRemovingTail, setIsRemovingTail] = useState(false);
+    const [currentHighlightIndex, setCurrentHighlightIndex] = useState<number[]>([])
 
     const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         setInputValue(e.target.value);
@@ -33,7 +40,7 @@ export const ListPage: React.FC = () => {
         linkedList.prepend(parseInt(inputValue));
         setTemporaryHead(<Circle state={ElementStates.Changing} isSmall={true} letter={inputValue.toString()}/>);
         setTimeout(() => {
-            setTemporaryHead('top');
+            setTemporaryHead('head');
         }, DELAY_IN_MS);
         setLinkedList(linkedList);
         await delay(DELAY_IN_MS)
@@ -51,12 +58,6 @@ export const ListPage: React.FC = () => {
             console.log('Please enter a value'); // Or handle this case as needed
             return;
         }
-
-        // const valueToAdd = parseInt(inputValue);
-        // if (isNaN(valueToAdd)) {
-        //     console.log('Please enter a valid number');
-        //     return;
-        // }
         linkedList.append(parseInt(inputValue));
         setTemporaryTail(<Circle state={ElementStates.Changing} isSmall={true} letter={inputValue.toString()}/>);
         setTimeout(() => {
@@ -73,12 +74,18 @@ export const ListPage: React.FC = () => {
         console.log(linkedList.print());
     }
 
-    const handleAddAtIndex = () => {
+    const handleAddAtIndex = async (delay: (ms: number) => Promise<void>) => {
         if (inputValue.trim() === '' || indexInputValue === null) {
             console.log('Please enter both a value and an index');
             return;
         }
-
+        const nodeValue = visualLinkedList[indexInputValue].toString();
+        setTemporaryNode(<Circle state={ElementStates.Changing} isSmall={true} letter={nodeValue}/>);
+        for (let i = 0; i <= indexInputValue - 1; i++) {
+            setCurrentHighlightIndex(prevIndices => [...prevIndices, i]);
+            setNextElementPosition(i + 1); //
+            await delay(DELAY_IN_MS);
+        }
         const valueToAdd = parseInt(inputValue);
         if (isNaN(valueToAdd)) {
             console.log('Please enter a valid number for the value');
@@ -93,47 +100,76 @@ export const ListPage: React.FC = () => {
         linkedList.insertAtIndex(valueToAdd, indexInputValue);
         setLinkedList(linkedList.clone());
         setVisualLinkedList(linkedList.toArray());
+        setNextElementPosition(null)
+        setCurrentHighlightIndex([])
         setInputValue('');
         setIndexInputValue(null);
         console.log(linkedList.print());
     };
 
-    const handleRemoveFromHead = () => {
+    const handleRemoveFromHead = async (delay: (ms: number) => Promise<void>) => {
         if (linkedList.getSize() === 0) {
             console.log('List is empty');
             return;
         }
+        setTemporaryHead(<Circle state={ElementStates.Changing} isSmall={true}
+                                 letter={visualLinkedList[0].toString()}/>);
+        setIsRemovingHead(true)
         linkedList.deleteFromHead();
         setLinkedList(linkedList.clone());
+        setTimeout(() => {
+            setTemporaryHead('head');
+        }, DELAY_IN_MS);
+        await delay(DELAY_IN_MS)
+        setIsRemovingHead(false);
         setVisualLinkedList(linkedList.toArray());
         console.log(linkedList.print());
     }
 
-    const handleRemoveFromTail = () => {
+    const handleRemoveFromTail = async (delay: (ms: number) => Promise<void>) => {
         if (linkedList.getSize() === 0) {
             console.log('List is empty');
             return;
         }
+        setIsRemovingTail(true);
+        const tailValue = visualLinkedList[visualLinkedList.length - 1].toString();
+        setTemporaryTail(<Circle state={ElementStates.Changing} isSmall={true} letter={tailValue}/>);
+
         linkedList.deleteFromTail();
         setLinkedList(linkedList.clone());
+        setTimeout(() => {
+            setTemporaryTail('tail');
+        }, DELAY_IN_MS);
+        await delay(DELAY_IN_MS);
+        setIsRemovingTail(false);
         setVisualLinkedList(linkedList.toArray());
         console.log(linkedList.print());
     };
 
-    const handleRemoveAtIndex = () => {
+
+    const handleRemoveAtIndex = async (delay: (ms: number) => Promise<void>) => {
         if (indexInputValue === null) {
             console.log('Please enter an index');
             return;
+        }
+        for (let i = 0; i <= indexInputValue - 1; i++) {
+            setCurrentHighlightIndex(prevIndices => [...prevIndices, i]);
+            await delay(DELAY_IN_MS);
         }
 
         if (indexInputValue < 0 || indexInputValue >= linkedList.getSize()) {
             console.log('Invalid index');
             return;
         }
-
+        const nodeValue = visualLinkedList[indexInputValue].toString();
+        setTemporaryNode(<Circle state={ElementStates.Changing} isSmall={true} letter={nodeValue}/>);
         linkedList.deleteAtIndex(indexInputValue);
         setLinkedList(linkedList.clone());
+        setIsRemovingAtIndex(true);
+        await delay(DELAY_IN_MS);
         setVisualLinkedList(linkedList.toArray());
+        setCurrentHighlightIndex([])
+        setIsRemovingAtIndex(false);
         setIndexInputValue(null);
         console.log(linkedList.print());
     };
@@ -164,11 +200,11 @@ export const ListPage: React.FC = () => {
                         />
                         <Button
                             text="Удалить из head"
-                            onClick={handleRemoveFromHead}
+                            onClick={() => handleRemoveFromHead(delay)}
                         />
                         <Button
                             text="Удалить из tail"
-                            onClick={handleRemoveFromTail}
+                            onClick={() => handleRemoveFromTail(delay)}
                         />
                     </div>
                 </div>
@@ -183,14 +219,14 @@ export const ListPage: React.FC = () => {
                     </div>
                     <div className={styles.settingsBottomButtons}>
                         <Button
-                            onClick={handleAddAtIndex}
+                            onClick={() => handleAddAtIndex(delay)}
                             extraClass={styles.largeButtons}
                             text="Добавить по индексу"
                         />
                         <Button
                             extraClass={styles.largeButtons}
                             text="Удалить по индексу"
-                            onClick={handleRemoveAtIndex}
+                            onClick={() => handleRemoveAtIndex(delay)}
                         />
                     </div>
                 </div>
@@ -200,11 +236,17 @@ export const ListPage: React.FC = () => {
                             {visualLinkedList.map((char, index) => (
                                 <li key={index}>
                                     <Circle
-                                        state={index === newElementIndex ? ElementStates.Modified : ElementStates.Default}
-                                        letter={char.toString()}
+                                        state={(index === newElementIndex) ? ElementStates.Modified :
+                                            currentHighlightIndex.includes(index) ? ElementStates.Changing :
+                                                ElementStates.Default}
+                                        letter={(isRemovingHead && index === 0) ||
+                                        (isRemovingTail && index === visualLinkedList.length - 1) ||
+                                        (isRemovingAtIndex && index === indexInputValue) ? "" : char.toString()}
                                         index={index}
-                                        head={index === 0 ? temporaryHead : undefined}
-                                        tail={index === visualLinkedList.length - 1 ? temporaryTail : undefined}
+                                        head={index === 0 ? temporaryHead :
+                                            index === nextElementPosition ? temporaryNode : undefined}
+                                        tail={index === visualLinkedList.length - 1 && !isRemovingAtIndex ? temporaryTail :
+                                            index === indexInputValue && isRemovingAtIndex ? temporaryNode : undefined}
                                     />
                                 </li>
                             ))}

@@ -5,37 +5,29 @@ export interface IStack<T> {
     getSize: () => number;
 }
 
-export const createStack = <T>(): IStack<T> => {
-    let container: T[] = [];
+export class Stack<T> implements IStack<T> {
+    private container: T[] = [];
 
-    const push = (item: T): IStack<T> => {
-        container = [...container, item];
-        return stack;
-    };
+    push(item: T): Stack<T> {
+        this.container.push(item);
+        return this;
+    }
 
-    const pop = (): IStack<T> => {
-        if (container.length === 0) {
-            return stack;
+    pop(): Stack<T> {
+        if (this.container.length > 0) {
+            this.container.pop();
         }
-        container = container.slice(0, -1);
-        return stack;
-    };
+        return this;
+    }
 
-    const peak = (): T | null => {
-        if (container.length === 0) {
+    peak(): T | null {
+        if (this.container.length === 0) {
             return null;
         }
-        return container[container.length - 1];
-    };
+        return this.container[this.container.length - 1];
+    }
 
-    const getSize = (): number => container.length;
-
-    const stack: IStack<T> = {
-        push,
-        pop,
-        peak,
-        getSize,
-    };
-
-    return stack;
-};
+    getSize(): number {
+        return this.container.length;
+    }
+}

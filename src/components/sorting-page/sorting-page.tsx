@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {SolutionLayout} from "../ui/solution-layout/solution-layout";
 import styles from "../sorting-page/sorting-page.module.css"
 import {Button} from "../ui/button/button";
@@ -17,6 +17,11 @@ export const SortingPage: React.FC = () => {
     const [sortedIndexes, setSortedIndexes] = useState<number[] | null>(null)
     const [array, setArray] = useState<number[] | null>(null)
     const [sortingAlgorithm, setSortingAlgorithm] = useState<SortingAlgorithms>(SortingAlgorithms.Selection)
+
+    useEffect(() => {
+        generateArray()
+    }, []);
+
     const generateArray = () => {
         setSortedIndexes(null)
         const minLen = 3

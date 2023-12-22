@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useState} from "react";
+import React, {ChangeEvent, useEffect, useState} from "react";
 import {SolutionLayout} from "../ui/solution-layout/solution-layout";
 import styles from "../list-page/list-page.module.css";
 import {Input} from "../ui/input/input";
@@ -12,10 +12,10 @@ import {ElementStates} from "../../types/element-states";
 
 export const ListPage: React.FC = () => {
     const [isFinished, setIsFinished] = useState<boolean>(true);
-    const [inputValue, setInputValue] = useState<string>("");
+    const [inputValue, setInputValue] = useState<string | number>("");
     const [indexInputValue, setIndexInputValue] = useState<number | null>(null);
-    const [linkedList, setLinkedList] = useState(new LinkedList<number>());
-    const [visualLinkedList, setVisualLinkedList] = useState<number[]>([]);
+    const [linkedList, setLinkedList] = useState(new LinkedList<string | number>());
+    const [visualLinkedList, setVisualLinkedList] = useState<(string | number)[]>([]);
     const [temporaryHead, setTemporaryHead] = useState<string | React.ReactElement | undefined>('top');
     const [temporaryTail, setTemporaryTail] = useState<string | React.ReactElement | undefined>('tail');
     const [temporaryNode, setTemporaryNode] = useState<string | React.ReactElement | undefined>('');
@@ -23,6 +23,8 @@ export const ListPage: React.FC = () => {
     const [nextElementPosition, setNextElementPosition] = useState<number | null>(null);
     const [isAddingAtIndex, setIsAddingAtIndex] = useState<boolean>(false);
     const [newElementIndex, setNewElementIndex] = useState<number | null>(null);
+    const [isAddingHead, setIsAddingHead] = useState(false);
+    const [isAddingTail, setIsAddingTail] = useState(false);
     const [isRemovingHead, setIsRemovingHead] = useState(false);
     const [isRemovingTail, setIsRemovingTail] = useState(false);
     const [currentHighlightIndex, setCurrentHighlightIndex] = useState<number[]>([])
@@ -36,8 +38,23 @@ export const ListPage: React.FC = () => {
         setIndexInputValue(numericInputValue);
     };
 
+    const generateNotSoRandomArray = () => {
+        setVisualLinkedList([0, 34, 8, 1, 69])
+        linkedList.append(parseInt("0"))
+        linkedList.append(parseInt("34"))
+        linkedList.append(parseInt("8"))
+        linkedList.append(parseInt("1"))
+        linkedList.append(parseInt("69"))
+    }
+
+    useEffect(() => {
+        generateNotSoRandomArray()
+    }, []);
+
     const handleAddToHead = async (delay: (ms: number) => Promise<void>) => {
-        linkedList.prepend(parseInt(inputValue));
+        setIsFinished(false)
+        setIsAddingHead(true)
+        linkedList.prepend(inputValue);
         setTemporaryHead(<Circle state={ElementStates.Changing} isSmall={true} letter={inputValue.toString()}/>);
         setTimeout(() => {
             setTemporaryHead('head');
@@ -50,15 +67,19 @@ export const ListPage: React.FC = () => {
         }, DELAY_IN_MS);
         setVisualLinkedList(linkedList.toArray());
         setInputValue('');
-        console.log(linkedList.print());
+        setIsFinished(true)
+        setIsAddingHead(false)
+        setTemporaryHead('head')
     };
 
     const handleAddToTail = async (delay: (ms: number) => Promise<void>) => {
-        if (inputValue.trim() === '') {
-            console.log('Please enter a value'); // Or handle this case as needed
+        if (inputValue === '') {
+            console.log('Please enter a value');
             return;
         }
-        linkedList.append(parseInt(inputValue));
+        setIsFinished(false)
+        setIsAddingTail(true)
+        linkedList.append(inputValue);
         setTemporaryTail(<Circle state={ElementStates.Changing} isSmall={true} letter={inputValue.toString()}/>);
         setTimeout(() => {
             setTemporaryTail('tail');
@@ -71,14 +92,18 @@ export const ListPage: React.FC = () => {
         }, DELAY_IN_MS);
         setVisualLinkedList(linkedList.toArray());
         setInputValue('');
-        console.log(linkedList.print());
+        setIsFinished(true)
+        setIsAddingTail(false)
+        setTemporaryTail('tail')
     }
 
     const handleAddAtIndex = async (delay: (ms: number) => Promise<void>) => {
-        if (inputValue.trim() === '' || indexInputValue === null) {
+        if (inputValue === '' || indexInputValue === null) {
             console.log('Please enter both a value and an index');
             return;
         }
+        setIsFinished(false)
+        setIsAddingAtIndex(true)
         const nodeValue = visualLinkedList[indexInputValue].toString();
         setTemporaryNode(<Circle state={ElementStates.Changing} isSmall={true} letter={nodeValue}/>);
         for (let i = 0; i <= indexInputValue - 1; i++) {
@@ -86,11 +111,7 @@ export const ListPage: React.FC = () => {
             setNextElementPosition(i + 1); //
             await delay(DELAY_IN_MS);
         }
-        const valueToAdd = parseInt(inputValue);
-        if (isNaN(valueToAdd)) {
-            console.log('Please enter a valid number for the value');
-            return;
-        }
+        const valueToAdd = (inputValue);
 
         if (indexInputValue < 0 || indexInputValue > linkedList.getSize()) {
             console.log('Invalid index');
@@ -104,7 +125,8 @@ export const ListPage: React.FC = () => {
         setCurrentHighlightIndex([])
         setInputValue('');
         setIndexInputValue(null);
-        console.log(linkedList.print());
+        setIsAddingAtIndex(false)
+        setIsFinished(true)
     };
 
     const handleRemoveFromHead = async (delay: (ms: number) => Promise<void>) => {
@@ -112,6 +134,8 @@ export const ListPage: React.FC = () => {
             console.log('List is empty');
             return;
         }
+        setIsFinished(false)
+        setIsRemovingHead(true)
         setTemporaryHead(<Circle state={ElementStates.Changing} isSmall={true}
                                  letter={visualLinkedList[0].toString()}/>);
         setIsRemovingHead(true)
@@ -123,7 +147,8 @@ export const ListPage: React.FC = () => {
         await delay(DELAY_IN_MS)
         setIsRemovingHead(false);
         setVisualLinkedList(linkedList.toArray());
-        console.log(linkedList.print());
+        setIsRemovingHead(false)
+        setIsFinished(true)
     }
 
     const handleRemoveFromTail = async (delay: (ms: number) => Promise<void>) => {
@@ -131,6 +156,7 @@ export const ListPage: React.FC = () => {
             console.log('List is empty');
             return;
         }
+        setIsFinished(false)
         setIsRemovingTail(true);
         const tailValue = visualLinkedList[visualLinkedList.length - 1].toString();
         setTemporaryTail(<Circle state={ElementStates.Changing} isSmall={true} letter={tailValue}/>);
@@ -143,7 +169,7 @@ export const ListPage: React.FC = () => {
         await delay(DELAY_IN_MS);
         setIsRemovingTail(false);
         setVisualLinkedList(linkedList.toArray());
-        console.log(linkedList.print());
+        setIsFinished(true)
     };
 
 
@@ -152,6 +178,8 @@ export const ListPage: React.FC = () => {
             console.log('Please enter an index');
             return;
         }
+        setIsFinished(false)
+        setIsRemovingAtIndex(true)
         for (let i = 0; i <= indexInputValue - 1; i++) {
             setCurrentHighlightIndex(prevIndices => [...prevIndices, i]);
             await delay(DELAY_IN_MS);
@@ -165,13 +193,13 @@ export const ListPage: React.FC = () => {
         setTemporaryNode(<Circle state={ElementStates.Changing} isSmall={true} letter={nodeValue}/>);
         linkedList.deleteAtIndex(indexInputValue);
         setLinkedList(linkedList.clone());
-        setIsRemovingAtIndex(true);
         await delay(DELAY_IN_MS);
         setVisualLinkedList(linkedList.toArray());
         setCurrentHighlightIndex([])
         setIsRemovingAtIndex(false);
         setIndexInputValue(null);
-        console.log(linkedList.print());
+        setIsRemovingAtIndex(false);
+        setIsFinished(true)
     };
 
 
@@ -193,18 +221,26 @@ export const ListPage: React.FC = () => {
                         <Button
                             text="Добавить в head"
                             onClick={() => handleAddToHead(delay)}
+                            disabled={!isFinished || inputValue === ''}
+                            isLoader={isAddingHead}
                         />
                         <Button
                             text="Добавить в tail"
                             onClick={() => handleAddToTail(delay)}
+                            disabled={!isFinished || inputValue === ''}
+                            isLoader={isAddingTail}
                         />
                         <Button
                             text="Удалить из head"
                             onClick={() => handleRemoveFromHead(delay)}
+                            disabled={!isFinished}
+                            isLoader={isRemovingHead}
                         />
                         <Button
                             text="Удалить из tail"
                             onClick={() => handleRemoveFromTail(delay)}
+                            disabled={!isFinished}
+                            isLoader={isRemovingTail}
                         />
                     </div>
                 </div>
@@ -222,11 +258,15 @@ export const ListPage: React.FC = () => {
                             onClick={() => handleAddAtIndex(delay)}
                             extraClass={styles.largeButtons}
                             text="Добавить по индексу"
+                            disabled={!isFinished || (indexInputValue === null)}
+                            isLoader={isAddingAtIndex}
                         />
                         <Button
                             extraClass={styles.largeButtons}
                             text="Удалить по индексу"
                             onClick={() => handleRemoveAtIndex(delay)}
+                            disabled={!isFinished || (indexInputValue === null)}
+                            isLoader={isRemovingAtIndex}
                         />
                     </div>
                 </div>

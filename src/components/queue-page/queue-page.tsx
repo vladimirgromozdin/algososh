@@ -6,12 +6,15 @@ import {Button} from "../ui/button/button";
 import {delay} from "../../utils/delay";
 import {Circle} from "../ui/circle/circle";
 import {DELAY_IN_MS} from "../../constants/delays";
-import {createQueue, IQueue} from "./queue.algorithm";
+import {Queue} from "./queue.algorithm";
+import {ElementStates} from "../../types/element-states";
 
 export const QueuePage: React.FC = () => {
     const [isFinished, setIsFinished] = useState<boolean>(true);
+    const [isAdding, setIsAdding] = useState<boolean>(false)
+    const [isRemoving, setIsRemoving] = useState<boolean>(false)
     const [inputValue, setInputValue] = useState<string>("");
-    const [queue, setQueue] = useState<IQueue<string>>(createQueue<string>(7));
+    const [queue, setQueue] = useState<Queue<string>>(new Queue<string>(7));
     const [visualQueue, setVisualQueue] = useState<string[]>(Array(7).fill(""));
 
     const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -22,38 +25,36 @@ export const QueuePage: React.FC = () => {
         if (inputValue === "") {
             throw new Error("Input can't be empty");
         } else {
+            setIsAdding(true)
             setIsFinished(false);
             const newQueue = queue.enqueue(inputValue);
-
-            // Use the tail index from newQueue, not from the original queue
             const newVisualQueue = [...visualQueue];
-            newVisualQueue[newQueue.tail] = inputValue;
-
+            newVisualQueue[newQueue.getTail()] = inputValue;
             setVisualQueue(newVisualQueue);
             setInputValue("");
             await delay(DELAY_IN_MS);
             setQueue(newQueue);
+            setIsAdding(false)
             setIsFinished(true);
-
-            // Log the tail index from the updated queue
-            console.log("Updated tail index:", newQueue.tail);
         }
     };
 
 
     const handleRemoveFromQueue = async (delay: (ms: number) => Promise<void>) => {
         setIsFinished(false);
-        const newQueue = queue.dequeue();
-        setQueue(newQueue);
-        await delay(DELAY_IN_MS);
+        setIsRemoving(true)
         const newVisualQueue = [...visualQueue];
-        newVisualQueue[queue.head] = "";
+        newVisualQueue[queue.getHead()] = "";
+        const newQueue = queue.dequeue();
         setVisualQueue(newVisualQueue);
+        await delay(DELAY_IN_MS);
+        setQueue(newQueue);
         setIsFinished(true);
+        setIsRemoving(false)
     };
 
     const handleClearQueue = () => {
-        setQueue(createQueue<string>());
+        setQueue(new Queue<string>());
         setVisualQueue(Array(7).fill(""));
     };
 
@@ -74,7 +75,7 @@ export const QueuePage: React.FC = () => {
                     />
                     <div className={styles.settingsSortingOrder}>
                         <Button
-                            disabled={(queue.tail + 1) % 7 === queue.head && visualQueue[queue.head] !== ""}
+                            disabled={(queue.getTail() + 1) % 7 === queue.getHead() && visualQueue[queue.getHead()] !== ""}
                             text="Добавить"
                             onClick={() => handleAddToQueue(delay)}
                         />
@@ -98,10 +99,11 @@ export const QueuePage: React.FC = () => {
                             {visualQueue.map((char, index) => (
                                 <li key={index}>
                                     <Circle
+                                        state={((isAdding && index === queue.getTail()) || (isRemoving && index === (queue.getHead() - 1))) ? ElementStates.Changing : ElementStates.Default}
                                         letter={char}
                                         index={index}
-                                        head={!isQueueEmpty() && index === queue.head ? 'head' : undefined}
-                                        tail={!isQueueEmpty() && index === queue.tail ? 'tail' : undefined}
+                                        head={!isQueueEmpty() && index === queue.getHead() ? 'head' : undefined}
+                                        tail={!isQueueEmpty() && index === queue.getTail() ? 'tail' : undefined}
                                     />
                                 </li>
                             ))}

@@ -3,7 +3,7 @@ import {SolutionLayout} from "../ui/solution-layout/solution-layout";
 import styles from "../stack-page/stack-page.module.css";
 import {Button} from "../ui/button/button";
 import {Input} from "../ui/input/input";
-import {createStack, IStack} from "./stack.algorithm";
+import {Stack} from "./stack.algorithm";
 import {Circle} from "../ui/circle/circle";
 import {delay} from "../../utils/delay";
 import {DELAY_IN_MS} from "../../constants/delays";
@@ -12,7 +12,7 @@ import {ElementStates} from "../../types/element-states";
 export const StackPage: React.FC = () => {
     const [isFinished, setIsFinished] = useState<boolean>(true)
     const [inputValue, setInputValue] = useState<(string)>("");
-    const [stack, setStack] = useState<IStack<string>>(createStack<string>());
+    const [stack, setStack] = useState(new Stack<string>());
     const [visualStack, setVisualStack] = useState<(string)[]>([])
 
     const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -43,7 +43,7 @@ export const StackPage: React.FC = () => {
     }
 
     const handleClearStack = () => {
-        setStack(createStack<string>())
+        setStack(new Stack<string>())
         setVisualStack([])
     }
 
@@ -72,7 +72,7 @@ export const StackPage: React.FC = () => {
                     {visualStack && <ul className={styles.stack}>
                         {visualStack.map((char, index) => <li key={index}>
                             <Circle
-                                state={index === visualStack.length-1 && !isFinished ? ElementStates.Changing : ElementStates.Default}
+                                state={index === visualStack.length - 1 && !isFinished ? ElementStates.Changing : ElementStates.Default}
                                 letter={char} index={index}
                                 head={index === visualStack.length - 1 ? 'top' : undefined}/>
                         </li>)}

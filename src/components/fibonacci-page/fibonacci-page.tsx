@@ -46,7 +46,7 @@ export const FibonacciPage: React.FC = () => {
                     <Input onChange={onInputChange} type="number" placeholder={'Введите текст'} max={19}
                            isLimitText={true}/>
                     <Button onClick={() => inputValue !== null && renderSequence(inputValue)} text={'Рассчитать'}
-                            disabled={!isFinished} isLoader={!isFinished}/>
+                            disabled={!isFinished || !inputValue || inputValue>19} isLoader={!isFinished}/>
                 </div>
                 <div>
                     {sequence && <ul className={styles.list}>

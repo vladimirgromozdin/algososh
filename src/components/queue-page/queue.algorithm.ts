@@ -3,54 +3,58 @@ export interface IQueue<T> {
     dequeue: () => IQueue<T>;
     peek: () => T | null;
     getSize: () => number;
-    head: number;
-    tail: number;
+    getHead: () => number;
+    getTail: () => number
 }
 
-export const createQueue = <T>(size: number = 7): IQueue<T> => {
-    let container: (T | null)[] = Array(size).fill(null);
-    let head = 0;
-    let tail = -1;
+export class Queue<T> implements IQueue<T> {
+    private container: (T | null)[];
+    private head: number;
+    private tail: number;
 
-    const enqueue = (item: T): IQueue<T> => {
-        tail = (tail + 1) % container.length;
-        container[tail] = item;
-        return {...queue, tail};
-    };
+    constructor(size: number = 7) {
+        this.container = Array(size).fill(null);
+        this.head = 0;
+        this.tail = -1;
+    }
 
-    const dequeue = (): IQueue<T> => {
-        if (head === tail) {
-            return queue;
+    enqueue(item: T): Queue<T> {
+        this.tail = (this.tail + 1) % this.container.length;
+        this.container[this.tail] = item;
+        return this;
+    }
+
+    dequeue(): Queue<T> {
+        if (this.isEmpty()) {
+            return this;
         }
-        container[head] = null;
-        head = (head + 1) % container.length;
-        return {...queue, head};
-    };
+        this.container[this.head] = null;
+        this.head = (this.head + 1) % this.container.length;
+        return this;
+    }
 
-    const peek = (): T | null => {
-        if (head === tail) {
+    peek(): T | null {
+        if (this.isEmpty()) {
             return null;
         }
-        return container[head];
-    };
+        return this.container[this.head];
+    }
 
-    const getSize = (): number => {
-        return (tail >= head) ? tail - head + 1 : container.length - head + tail + 1;
-    };
+    getSize(): number {
+        return (this.tail >= this.head) ?
+            (this.tail - this.head + 1) :
+            (this.container.length - this.head + this.tail + 1);
+    }
 
-    const queue: IQueue<T> = {
-        enqueue,
-        dequeue,
-        peek,
-        getSize,
-        get head() {
-            return head;
-        },
-        get tail() {
-            return tail;
-        }
-    };
+    public getHead(): number {
+        return this.head;
+    }
 
-    return queue;
-};
+    public getTail(): number {
+        return this.tail;
+    }
 
+    private isEmpty(): boolean {
+        return this.getSize() === 0;
+    }
+}

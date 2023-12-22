@@ -11,6 +11,7 @@ import {ElementStates} from "../../types/element-states";
 export const StringComponent: React.FC = () => {
     const [isFinished, setIsFinished] = useState<boolean>(true)
     const [candidateIndexes, setCandidateIndexes] = useState<number[] | null>(null)
+    const [reversedIndexes, setReversedIndexes] = useState<number[] | null>(null)
     const [inputValue, setInputValue] = useState('');
     const [currentStringArray, setCurrentStringArray] = useState<string[]>([]);
     const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -29,6 +30,19 @@ export const StringComponent: React.FC = () => {
         }
     }
 
+    const updateReversedIndexes = (left: number | null, right: number | null) => {
+        setReversedIndexes(prevIndexes => {
+            let newIndexes = prevIndexes ? [...prevIndexes] : [];
+            if (left !== null) {
+                newIndexes.push(left);
+            }
+            if (right !== null) {
+                newIndexes.push(right);
+            }
+            return newIndexes;
+        });
+    };
+
     const unlockButton = () => {
         setIsFinished(true);
         setCandidateIndexes(null)
@@ -36,8 +50,8 @@ export const StringComponent: React.FC = () => {
 
     const handleStringReversal = () => {
         setIsFinished(false);
-        // This will populate the currentStringArray trigger string render
         const arrayFromString = Array.from(inputValue)
+        setReversedIndexes([]);
         setCandidateIndexes([0, inputValue.length - 1])
         setCurrentStringArray(arrayFromString)
         setTimeout(() => {
@@ -51,7 +65,7 @@ export const StringComponent: React.FC = () => {
             <div className={styles.content}>
                 <div className={styles.inputContainer}>
                     <Input onChange={onInputChange} placeholder={'Введите текст'} maxLength={11} isLimitText={true}/>
-                    <Button onClick={handleStringReversal} text={'Развернуть'} disabled={!isFinished} isLoader={!isFinished}/>
+                    <Button onClick={handleStringReversal} text={'Развернуть'} disabled={!isFinished || inputValue === ''} isLoader={!isFinished}/>
                 </div>
                 <div>
                     {currentStringArray && <ul className={styles.list}>

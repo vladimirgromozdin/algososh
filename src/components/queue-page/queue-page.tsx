@@ -75,7 +75,7 @@ export const QueuePage: React.FC = () => {
                     />
                     <div className={styles.settingsSortingOrder}>
                         <Button
-                            disabled={(queue.getTail() + 1) % 7 === queue.getHead() && visualQueue[queue.getHead()] !== ""}
+                            disabled={((queue.getTail() + 1) % 7 === queue.getHead() && visualQueue[queue.getHead()] !== "") || inputValue === ''}
                             text="Добавить"
                             onClick={() => handleAddToQueue(delay)}
                         />

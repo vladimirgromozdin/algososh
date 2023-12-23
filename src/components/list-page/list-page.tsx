@@ -16,7 +16,7 @@ export const ListPage: React.FC = () => {
     const [indexInputValue, setIndexInputValue] = useState<number | null>(null);
     const [linkedList, setLinkedList] = useState(new LinkedList<string | number>());
     const [visualLinkedList, setVisualLinkedList] = useState<(string | number)[]>([]);
-    const [temporaryHead, setTemporaryHead] = useState<string | React.ReactElement | undefined>('top');
+    const [temporaryHead, setTemporaryHead] = useState<string | React.ReactElement | undefined>('head');
     const [temporaryTail, setTemporaryTail] = useState<string | React.ReactElement | undefined>('tail');
     const [temporaryNode, setTemporaryNode] = useState<string | React.ReactElement | undefined>('');
     const [isRemovingAtIndex, setIsRemovingAtIndex] = useState<boolean>(false);
@@ -40,11 +40,11 @@ export const ListPage: React.FC = () => {
 
     const generateNotSoRandomArray = () => {
         setVisualLinkedList([0, 34, 8, 1, 69])
-        linkedList.append(parseInt("0"))
-        linkedList.append(parseInt("34"))
-        linkedList.append(parseInt("8"))
-        linkedList.append(parseInt("1"))
-        linkedList.append(parseInt("69"))
+        linkedList.append("0")
+        linkedList.append("34")
+        linkedList.append("8")
+        linkedList.append("1")
+        linkedList.append("69")
     }
 
     useEffect(() => {
@@ -104,11 +104,15 @@ export const ListPage: React.FC = () => {
         }
         setIsFinished(false)
         setIsAddingAtIndex(true)
-        const nodeValue = visualLinkedList[indexInputValue].toString();
+        const nodeValue = inputValue.toString()
+        setTemporaryHead(<Circle state={ElementStates.Changing} isSmall={true} letter={nodeValue}/>)
+        setCurrentHighlightIndex([0])
+        await delay(DELAY_IN_MS);
+        setTemporaryHead('head')
         setTemporaryNode(<Circle state={ElementStates.Changing} isSmall={true} letter={nodeValue}/>);
         for (let i = 0; i <= indexInputValue - 1; i++) {
             setCurrentHighlightIndex(prevIndices => [...prevIndices, i]);
-            setNextElementPosition(i + 1); //
+            setNextElementPosition(i + 1);
             await delay(DELAY_IN_MS);
         }
         const valueToAdd = (inputValue);
@@ -200,6 +204,7 @@ export const ListPage: React.FC = () => {
         setIndexInputValue(null);
         setIsRemovingAtIndex(false);
         setIsFinished(true)
+        setTemporaryNode(undefined);
     };
 
 
@@ -233,13 +238,13 @@ export const ListPage: React.FC = () => {
                         <Button
                             text="Удалить из head"
                             onClick={() => handleRemoveFromHead(delay)}
-                            disabled={!isFinished}
+                            disabled={!isFinished || linkedList.getSize() === 0}
                             isLoader={isRemovingHead}
                         />
                         <Button
                             text="Удалить из tail"
                             onClick={() => handleRemoveFromTail(delay)}
-                            disabled={!isFinished}
+                            disabled={!isFinished || linkedList.getSize() === 0}
                             isLoader={isRemovingTail}
                         />
                     </div>
@@ -258,14 +263,14 @@ export const ListPage: React.FC = () => {
                             onClick={() => handleAddAtIndex(delay)}
                             extraClass={styles.largeButtons}
                             text="Добавить по индексу"
-                            disabled={!isFinished || (indexInputValue === null)}
+                            disabled={!isFinished || (indexInputValue === null) || ((indexInputValue > (linkedList.getSize() - 1)))}
                             isLoader={isAddingAtIndex}
                         />
                         <Button
                             extraClass={styles.largeButtons}
                             text="Удалить по индексу"
                             onClick={() => handleRemoveAtIndex(delay)}
-                            disabled={!isFinished || (indexInputValue === null)}
+                            disabled={!isFinished || (indexInputValue === null) || ((indexInputValue > (linkedList.getSize() - 1)))}
                             isLoader={isRemovingAtIndex}
                         />
                     </div>
@@ -279,9 +284,9 @@ export const ListPage: React.FC = () => {
                                         state={(index === newElementIndex) ? ElementStates.Modified :
                                             currentHighlightIndex.includes(index) ? ElementStates.Changing :
                                                 ElementStates.Default}
-                                        letter={(isRemovingHead && index === 0) ||
-                                        (isRemovingTail && index === visualLinkedList.length - 1) ||
-                                        (isRemovingAtIndex && index === indexInputValue) ? "" : char.toString()}
+                                        letter={((isRemovingHead && index === 0) ||
+                                            (isRemovingTail && index === visualLinkedList.length - 1) ||
+                                            (isRemovingAtIndex && (index === indexInputValue) && (currentHighlightIndex.includes(index-1))) ? "" : char.toString())}
                                         index={index}
                                         head={index === 0 ? temporaryHead :
                                             index === nextElementPosition ? temporaryNode : undefined}

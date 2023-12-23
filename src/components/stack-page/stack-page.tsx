@@ -56,7 +56,7 @@ export const StackPage: React.FC = () => {
                            isLimitText={true}/>
                     <div className={styles.settingsSortingOrder}>
                         <Button
-                            text="Добавить" onClick={() => handleAddToStack(delay)}>
+                            text="Добавить" disabled={inputValue === ''} onClick={() => handleAddToStack(delay)}>
                         </Button>
                         <Button
                             text="Удалить" disabled={visualStack.length === 0}

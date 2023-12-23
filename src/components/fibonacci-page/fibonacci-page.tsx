@@ -12,10 +12,10 @@ export const FibonacciPage: React.FC = () => {
     const [isFinished, setIsFinished] = useState<boolean>(true)
     const [sequence, setSequence] = useState<string[]>([])
     const [currentIndex, setCurrentIndex] = useState<number>(0)
-    const [inputValue, setInputValue] = useState<number | null>(null);
+    const [inputValue, setInputValue] = useState<number | ''>('');
 
     const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value === '' ? null : Number(e.target.value);
+        const newValue = e.target.value === '' ? '' : Number(e.target.value);
         setInputValue(newValue)
     }
 
@@ -43,9 +43,9 @@ export const FibonacciPage: React.FC = () => {
         <SolutionLayout title="Последовательность Фибоначчи">
             <div className={styles.content}>
                 <div className={styles.inputContainer}>
-                    <Input onChange={onInputChange} type="number" placeholder={'Введите текст'} max={19}
+                    <Input onChange={onInputChange} value={inputValue} type="number" placeholder={'Введите текст'} max={19}
                            isLimitText={true}/>
-                    <Button onClick={() => inputValue !== null && renderSequence(inputValue)} text={'Рассчитать'}
+                    <Button onClick={() => inputValue !== null && renderSequence(Number(inputValue))} text={'Рассчитать'}
                             disabled={!isFinished || !inputValue || inputValue>19} isLoader={!isFinished}/>
                 </div>
                 <div>

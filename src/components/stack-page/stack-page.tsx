@@ -13,6 +13,8 @@ export const StackPage: React.FC = () => {
     const [isFinished, setIsFinished] = useState<boolean>(true)
     const [inputValue, setInputValue] = useState<(string)>("");
     const [stack, setStack] = useState(new Stack<string>());
+    const [isAdding, setIsAdding] = useState<boolean>(false)
+    const [isRemoving, setIsRemoving] = useState<boolean>(false)
     const [visualStack, setVisualStack] = useState<(string)[]>([])
 
     const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -23,22 +25,26 @@ export const StackPage: React.FC = () => {
         if (inputValue === "") {
             throw new Error("Input can't be empty")
         } else {
+            setIsAdding(true)
             setIsFinished(false)
             const newStack = stack.push(inputValue)
             setVisualStack([...visualStack, inputValue])
             setInputValue("")
             await delay(DELAY_IN_MS)
             setStack(newStack)
+            setIsAdding(false)
             setIsFinished(true)
         }
     }
 
     const handleRemoveFromStack = async (delay: (ms: number) => Promise<void>) => {
         setIsFinished(false)
+        setIsRemoving(true)
         const newStack = stack.pop()
         setStack(newStack)
         await delay(DELAY_IN_MS)
         setVisualStack(visualStack.slice(0, -1))
+        setIsRemoving(false)
         setIsFinished(true)
     }
 
@@ -55,17 +61,17 @@ export const StackPage: React.FC = () => {
                     <Input value={inputValue} onChange={onInputChange} placeholder={'Введите текст'} maxLength={4}
                            isLimitText={true}/>
                     <div className={styles.settingsSortingOrder}>
-                        <Button
-                            text="Добавить" disabled={inputValue === ''} onClick={() => handleAddToStack(delay)}>
+                        <Button isLoader={isAdding}
+                            text="Добавить" disabled={inputValue === '' || !isFinished} onClick={() => handleAddToStack(delay)}>
                         </Button>
-                        <Button
-                            text="Удалить" disabled={visualStack.length === 0}
+                        <Button isLoader={isRemoving}
+                            text="Удалить" disabled={visualStack.length === 0 || !isFinished}
                             onClick={() => handleRemoveFromStack(delay)}>
                         </Button>
                     </div>
                     <div className={styles.buttonClear}>
                         <Button text="Очистить"
-                                onClick={handleClearStack} disabled={visualStack.length === 0}></Button>
+                                onClick={handleClearStack} disabled={visualStack.length === 0 || !isFinished}></Button>
                     </div>
                 </div>
                 <div>

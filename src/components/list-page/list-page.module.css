@@ -1,0 +1,48 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 12px;
+}
+
+.inputField {
+    max-width: 204px;
+}
+
+.inputContainerTop {
+    width: 952px;
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+}
+
+.inputContainerBottom {
+    width: 952px;
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+}
+
+.settingsTopButtons {
+    display: flex;
+    gap: 12px;
+}
+
+.settingsBottomButtons {
+    width: 715px;
+    display: flex;
+    gap: 12px;
+}
+
+.largeButtons {
+    display: flex;
+    flex-grow: 1;
+    width: 362px;
+}
+
+.linkedList {
+    gap: 20px;
+    display: flex;
+    list-style: none;
+    padding-top: 60px;
+}

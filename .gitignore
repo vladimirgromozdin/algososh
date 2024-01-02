@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Build/Output
+dist/
+build/
+
+# Environment Variables
+.env
+
+# IDE Specific
+.idea/
+
+# Logs
+*.log
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Temporary Files
+*.tmp
+*.swp
+*.swo
+
+# Version Control System
+.svn/
+
+# Other
+.next/
+.cache/
+README.local.md

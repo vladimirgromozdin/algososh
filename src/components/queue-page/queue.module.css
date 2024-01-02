@@ -1,0 +1,26 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.inputContainer {
+    width: 829px;
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    padding-bottom: 20px;
+}
+
+.settingsSortingOrder {
+    display: flex;
+    gap: 12px;
+    max-width: 430px;
+    margin-right: 60px;
+}
+
+.stack {
+    gap: 20px;
+    display: flex;
+    list-style: none;
+}

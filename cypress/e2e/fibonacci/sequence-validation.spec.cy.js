@@ -1,6 +1,6 @@
 describe("Fibonacci sequence validation", function () {
   it("should validate the Fibonacci sequence", function () {
-    cy.visit("http://localhost:3000/fibonacci");
+    cy.visit("fibonacci");
     cy.get('input[placeholder="Введите текст"]').as("fiboInput");
     cy.get("button").contains("Рассчитать").closest("button").as("calcButton");
 

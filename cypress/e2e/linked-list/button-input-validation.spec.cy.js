@@ -1,6 +1,6 @@
 describe("button is disabled when input is empty", function () {
   it("should disable the add button when input is empty", function () {
-    cy.visit("http://localhost:3000/list");
+    cy.visit("list");
     cy.get('input[placeholder="Введите текст"]').clear();
     cy.get("button")
       .contains("Добавить в head")

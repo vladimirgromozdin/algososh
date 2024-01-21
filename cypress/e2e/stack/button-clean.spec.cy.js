@@ -1,6 +1,6 @@
 describe("clean button removes all stack elements", function () {
   it("should remove stack elements when clicked", function () {
-    cy.visit("http://localhost:3000/stack");
+    cy.visit("stack");
     // Define aliases
     cy.get('input[placeholder="Введите текст"]').as("stackInput");
     cy.get("button").contains("Добавить").closest("button").as("addButton");

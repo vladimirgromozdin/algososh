@@ -1,10 +1,12 @@
+import { SELECTORS } from "../../support/selectors";
+
 describe("adding element to the queue", function () {
   it("should add element to the queue, assign proper head and tail and render colors", function () {
-    cy.visit("http://localhost:3000/queue");
+    cy.visit("queue");
     cy.get('input[placeholder="Введите текст"]').as("queueInput");
     cy.get("button").contains("Добавить").closest("button").as("addButton");
     cy.get('ul[class*="queue"] li:first')
-      .find('div[class*="circle_circle"]')
+      .find(SELECTORS.circleElement)
       .as("firstElement");
     // Adding element to the queue
     cy.get("@queueInput").type("1234");
@@ -19,7 +21,7 @@ describe("adding element to the queue", function () {
         expect(text.trim()).equal("head");
       });
     cy.get('ul[class*="queue"] li:first')
-      .find('div[class*="circle_tail"]')
+      .find(SELECTORS.circleTail)
       .invoke("text")
       .then((text) => {
         expect(text.trim()).equal("tail");

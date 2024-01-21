@@ -1,8 +1,9 @@
 import { DELAY_IN_MS, SHORT_DELAY_IN_MS } from "../../../src/constants/delays";
+import { SELECTORS } from "../../support/selectors";
 
 describe("linked-list elements interactions", function () {
   beforeEach(() => {
-    cy.visit("http://localhost:3000/list");
+    cy.visit("list");
     cy.get('input[placeholder="Введите текст"]').as("textInput");
     cy.get('input[placeholder="Введите индекс"]').as("indexInput");
     cy.get("button")
@@ -31,13 +32,13 @@ describe("linked-list elements interactions", function () {
       .as("removeByIndex");
   });
   it("should render default list", () => {
-    cy.get('ul[class*="list-page"]').children("li").should("have.length", 5);
+    cy.get(SELECTORS.listPageUl).children("li").should("have.length", 5);
   });
   it("should add element to head", () => {
     cy.get("@textInput").type("A1B2");
     cy.get("@addToHeadButton").click();
     cy.wait(DELAY_IN_MS);
-    cy.get('ul[class*="list-page"] li:first')
+    cy.get(`${SELECTORS.listPageUl} li:first`)
       .find("p.text_type_circle")
       .invoke("text")
       .then((text) => {
@@ -48,7 +49,7 @@ describe("linked-list elements interactions", function () {
     cy.get("@textInput").type("A1B2");
     cy.get("@addToTailButton").click();
     cy.wait(DELAY_IN_MS);
-    cy.get('ul[class*="list-page"] li:last')
+    cy.get(`${SELECTORS.listPageUl} li:last`)
       .find("p.text_type_circle")
       .invoke("text")
       .then((text) => {
@@ -60,7 +61,7 @@ describe("linked-list elements interactions", function () {
     cy.get("@indexInput").type(0);
     cy.get("@addByIndex").click();
     cy.wait(DELAY_IN_MS);
-    cy.get('ul[class*="list-page"] li:first')
+    cy.get(`${SELECTORS.listPageUl} li:first`)
       .find("p.text_type_circle")
       .invoke("text")
       .then((text) => {
@@ -70,7 +71,7 @@ describe("linked-list elements interactions", function () {
   it("should remove element from head", () => {
     cy.get("@removeFromHeadButton").click();
     cy.wait(DELAY_IN_MS);
-    cy.get('ul[class*="list-page"] li:first')
+    cy.get(`${SELECTORS.listPageUl} li:first`)
       .find("p.text_type_circle")
       .invoke("text")
       .then((text) => {
@@ -80,7 +81,7 @@ describe("linked-list elements interactions", function () {
   it("should remove element from tail", () => {
     cy.get("@removeFromTailButton").click();
     cy.wait(DELAY_IN_MS);
-    cy.get('ul[class*="list-page"] li:last')
+    cy.get(`${SELECTORS.listPageUl} li:last`)
       .find("p.text_type_circle")
       .invoke("text")
       .then((text) => {
@@ -91,7 +92,7 @@ describe("linked-list elements interactions", function () {
     cy.get("@indexInput").type(4);
     cy.get("@removeByIndex").click();
     cy.wait(DELAY_IN_MS * 5);
-    cy.get('ul[class*="list-page"] li:last')
+    cy.get(`${SELECTORS.listPageUl} li:last`)
       .find("p.text_type_circle")
       .invoke("text")
       .then((text) => {

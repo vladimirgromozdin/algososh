@@ -1,8 +1,9 @@
 import { SHORT_DELAY_IN_MS } from "../../../src/constants/delays";
+import { SELECTORS } from "../../support/selectors";
 
 describe("strings are reversed properly", function () {
   it("should reverse the string and apply styling on every step", function () {
-    cy.visit("http://localhost:3000/recursion");
+    cy.visit("recursion");
     cy.get('input[placeholder="Введите текст"]').as("stringInput");
     cy.get("button")
       .contains("Развернуть")
@@ -12,22 +13,22 @@ describe("strings are reversed properly", function () {
     cy.get("@reverseButton").click();
     cy.get("ul[class^='string']").children("li").should("have.length", 5);
     cy.get('ul[class*="string"] li:first')
-      .find('div[class*="circle_circle"]')
+      .find(SELECTORS.circleElement)
       .as("firstElement");
     cy.get('ul[class*="string"] li')
       .eq(1)
-      .find('div[class*="circle_circle"]')
+      .find(SELECTORS.circleElement)
       .as("secondElement");
     cy.get('ul[class*="string"] li')
       .eq(2)
-      .find('div[class*="circle_circle"]')
+      .find(SELECTORS.circleElement)
       .as("thirdElement");
     cy.get('ul[class*="string"] li')
       .eq(3)
-      .find('div[class*="circle_circle"]')
+      .find(SELECTORS.circleElement)
       .as("forthElement");
     cy.get('ul[class*="string"] li:last')
-      .find('div[class*="circle_circle"]')
+      .find(SELECTORS.circleElement)
       .as("lastElement");
 
     // Step 1 [1,2,3,4,5]
@@ -126,7 +127,7 @@ describe("strings are reversed properly", function () {
       .children("li")
       .each(($li) => {
         cy.wrap($li)
-          .find('div[class*="circle_circle"]')
+          .find(SELECTORS.circleElement)
           .invoke("attr", "class")
           .should("include", "circle_modified");
       });

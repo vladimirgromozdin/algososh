@@ -1,6 +1,6 @@
 describe("button removes the last stack element", function () {
   it("should remove last stack element", function () {
-    cy.visit("http://localhost:3000/stack");
+    cy.visit("stack");
     // Define aliases
     cy.get('input[placeholder="Введите текст"]').as("stackInput");
     cy.get("button").contains("Добавить").closest("button").as("addButton");

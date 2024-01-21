@@ -1,6 +1,8 @@
+import { SELECTORS } from "../../support/selectors";
+
 describe("cleaning the queue", function () {
   it("should clean the queue and remove all elements", function () {
-    cy.visit("http://localhost:3000/queue");
+    cy.visit("queue");
     cy.get('input[placeholder="Введите текст"]').as("queueInput");
     cy.get("button").contains("Добавить").closest("button").as("addButton");
     cy.get("button").contains("Очистить").closest("button").as("cleanButton");
@@ -12,7 +14,7 @@ describe("cleaning the queue", function () {
     cy.get("@cleanButton").click();
     cy.get('ul[class*="queue"] li').each(($li) => {
       cy.wrap($li)
-        .find('div[class*="circle_tail"]')
+        .find(SELECTORS.circleTail)
         .invoke("text")
         .then((text) => {
           expect(text.trim()).equal("");

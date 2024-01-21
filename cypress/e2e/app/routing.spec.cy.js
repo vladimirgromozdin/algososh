@@ -1,6 +1,6 @@
 describe("app works correctly with routes", function () {
   beforeEach(function () {
-    cy.visit("http://localhost:3000");
+    cy.visit("/");
   });
   it("navigates to the string page", function () {
     cy.get("div[class*='string']").click();

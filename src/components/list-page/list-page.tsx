@@ -285,8 +285,8 @@ export const ListPage: React.FC = () => {
                                             currentHighlightIndex.includes(index) ? ElementStates.Changing :
                                                 ElementStates.Default}
                                         letter={((isRemovingHead && index === 0) ||
-                                            (isRemovingTail && index === visualLinkedList.length - 1) ||
-                                            (isRemovingAtIndex && (index === indexInputValue) && (currentHighlightIndex.includes(index-1))) ? "" : char.toString())}
+                                        (isRemovingTail && index === visualLinkedList.length - 1) ||
+                                        (isRemovingAtIndex && (index === indexInputValue) && (currentHighlightIndex.includes(index - 1))) ? "" : char.toString())}
                                         index={index}
                                         head={index === 0 ? temporaryHead :
                                             index === nextElementPosition ? temporaryNode : undefined}

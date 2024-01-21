@@ -75,7 +75,6 @@ describe("strings are reversed properly", function () {
       .find("p.text_type_circle")
       .invoke("text")
       .then((text) => {
-        // Perform your assertions here
         expect(text).equal("1");
       });
     cy.wait(SHORT_DELAY_IN_MS);
